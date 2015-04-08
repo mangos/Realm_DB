@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `realmd_db_version`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `realmd_db_version` (
-  `required_20140607_Realm_Resync` bit(1) DEFAULT NULL
+  `required_20150409_Playerbot_and_Warden` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Last applied sql update to DB';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -47,22 +47,24 @@ DROP TABLE IF EXISTS `account`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Account identifier',
-  `username` varchar(32) NOT NULL DEFAULT '',
-  `sha_pass_hash` varchar(40) NOT NULL DEFAULT '',
+  `username` varchar(32) NOT NULL DEFAULT '' COMMENT 'User name',
+  `sha_pass_hash` varchar(40) NOT NULL DEFAULT '' COMMENT 'SHA1 password Hash',
   `gmlevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `sessionkey` longtext,
   `v` longtext,
-  `s` longtext,
-  `email` text,
-  `joindate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `s` longtext COMMENT 'password salt',
+  `email` text COMMENT 'Email address',
+  `joindate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Account Created Date',
   `last_ip` varchar(30) NOT NULL DEFAULT '0.0.0.0',
   `failed_logins` int(11) unsigned NOT NULL DEFAULT '0',
   `locked` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `last_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `active_realm_id` int(11) unsigned NOT NULL DEFAULT '0',
-  `expansion` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `active_realm_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'last realm id',
+  `expansion` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'max game expansion',
   `mutetime` bigint(40) unsigned NOT NULL DEFAULT '0',
   `locale` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `os` varchar(3) DEFAULT '' COMMENT 'Client OS Version',
+  `playerBot` bit(1) NOT NULL DEFAULT b'0' COMMENT 'Whether the account is a playerbot account',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_username` (`username`),
   KEY `idx_gmlevel` (`gmlevel`)
@@ -76,10 +78,10 @@ CREATE TABLE `account` (
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
 INSERT INTO `account` VALUES
-(1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2005-09-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0),
-(2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2005-09-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0),
-(3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2005-09-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0),
-(4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2005-09-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0);
+(1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2015-04-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+(2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2015-04-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+(3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2015-04-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+(4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2015-04-01 00:00:00','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
 
