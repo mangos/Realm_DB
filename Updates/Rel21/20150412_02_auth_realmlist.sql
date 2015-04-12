@@ -1,3 +1,4 @@
+
 -- --------------------------------------------------------------------------------
 -- This is an attempt to create a full transactional update
 -- --------------------------------------------------------------------------------
@@ -10,16 +11,16 @@ BEGIN
     DECLARE bRollback BOOL  DEFAULT FALSE ;
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET `bRollback` = TRUE;
 
-  SET @cOldRev = 'required_20150409_Playerbot_and_Warden'; 
+  SET @cOldRev = 'required_20150412_warden_db_log'; 
 
   -- Set the new revision string
-  SET @cNewRev = 'required_20150412_warden_db_log';
+  SET @cNewRev = 'required_20150412_auth_realmlist';
 
   -- Set thisRevision to the column name of db_version in the currently selected database
   SET @cThisRev := ((SELECT column_name FROM information_schema.`COLUMNS` WHERE table_name='realmd_db_version' AND table_schema=(SELECT DATABASE() AS thisDB FROM DUAL) AND column_name LIKE 'required%'));
 
   -- Set friendly Version Text
-  SET @cThisVersion = 'RealmDB Rev 21000_02';
+  SET @cThisVersion = 'RealmDB Rev 20150412_02';
 
  
   -- Only Proceed if the old values match
@@ -35,36 +36,20 @@ BEGIN
     -- The Above block is required for making table changes
 
     -- Apply the Version Change from Old Version to New Version
-    SET @query = CONCAT('ALTER TABLE account ADD COLUMN `os` varchar(3) DEFAULT \'\' COMMENT \'Client OS Version\' AFTER `locale`;');
+    SET @query = CONCAT('ALTER TABLE realmlist ADD COLUMN `localAddress` varchar(255) NOT NULL DEFAULT \'127.0.0.1\' AFTER `address`;');
     PREPARE stmt2 FROM @query;
     EXECUTE stmt2;
     DEALLOCATE PREPARE stmt2;
     -- The Above block is required for making table changes
 
     -- Apply the Version Change from Old Version to New Version
-    SET @query = CONCAT('ALTER TABLE account ADD COLUMN `playerBot` bit(1) NOT NULL DEFAULT b\'0\' COMMENT \'Whether the account is a playerbot account\' AFTER `os`;');
+    SET @query = CONCAT('ALTER TABLE realmlist ADD COLUMN `localSubnetMask` varchar(255) NOT NULL DEFAULT \'255.255.255.0\' AFTER `localAddress`;');
     PREPARE stmt3 FROM @query;
     EXECUTE stmt3;
     DEALLOCATE PREPARE stmt3;
     -- The Above block is required for making table changes
 
     -- -- -- -- Normal Update / Insert / Delete statements will go here  -- -- -- -- --
-
--- table structure for warden DB log
-DROP TABLE IF EXISTS `warden_log`;
-CREATE TABLE `warden_log` (
-  `entry` INT(11) UNSIGNED AUTO_INCREMENT NOT NULL COMMENT 'Log entry ID',
-  `check` TINYINT(3) UNSIGNED NOT NULL COMMENT 'Failed Warden check ID',
-  `action` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Action taken (enum WardenActions)',
-  `account` INT(11) UNSIGNED NOT NULL COMMENT 'Account ID',
-  `guid` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Player GUID',
-  `map` INT(11) UNSIGNED COMMENT 'Map ID',
-  `position_x` FLOAT COMMENT 'Player position X',
-  `position_y` FLOAT COMMENT 'Player position Y',
-  `position_z` FLOAT COMMENT 'Player position Z',
-  `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of the log entry',
-  PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Warden log of failed checks';
 
     -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     
@@ -89,4 +74,3 @@ CALL update_mangos();
 
 -- Drop the procedure
 DROP PROCEDURE IF EXISTS `update_mangos`;
-

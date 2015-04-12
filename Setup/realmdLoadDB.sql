@@ -499,6 +499,8 @@ CREATE TABLE `realmlist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Realm identifier',
   `name` varchar(32) NOT NULL DEFAULT '',
   `address` varchar(32) NOT NULL DEFAULT '127.0.0.1',
+  `localAddress` varchar(255) NOT NULL DEFAULT '127.0.0.1',
+  `localSubnetMask` varchar(255) NOT NULL DEFAULT '255.255.255.0',
   `port` int(11) NOT NULL DEFAULT '8085',
   `icon` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `realmflags` tinyint(3) unsigned NOT NULL DEFAULT '2' COMMENT 'Supported masks: 0x1 (invalid, not show in realm list), 0x2 (offline, set by mangosd), 0x4 (show version and build), 0x20 (new players), 0x40 (recommended)',
@@ -521,6 +523,28 @@ INSERT INTO `realmlist` VALUES
 (1,'mangos-zero','127.0.0.1',8085,0,2,0,0,0,'5875 6005');
 /*!40000 ALTER TABLE `realmlist` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- table structure for warden DB log
+--
+
+DROP TABLE IF EXISTS `warden_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `warden_log` (
+  `entry` INT(11) UNSIGNED AUTO_INCREMENT NOT NULL COMMENT 'Log entry ID',
+  `check` TINYINT(3) UNSIGNED NOT NULL COMMENT 'Failed Warden check ID',
+  `action` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Action taken (enum WardenActions)',
+  `account` INT(11) UNSIGNED NOT NULL COMMENT 'Account ID',
+  `guid` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Player GUID',
+  `map` INT(11) UNSIGNED COMMENT 'Map ID',
+  `position_x` FLOAT COMMENT 'Player position X',
+  `position_y` FLOAT COMMENT 'Player position Y',
+  `position_z` FLOAT COMMENT 'Player position Z',
+  `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of the log entry',
+  PRIMARY KEY (`entry`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Warden log of failed checks';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `uptime`
