@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `realmd_db_version`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `realmd_db_version` (
-  `required_20150409_Playerbot_and_Warden` bit(1) DEFAULT NULL
+  `required_20150722_01_realmcharacters_remove_constraint` bit(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Last applied sql update to DB';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -33,8 +33,7 @@ CREATE TABLE `realmd_db_version` (
 
 LOCK TABLES `realmd_db_version` WRITE;
 /*!40000 ALTER TABLE `realmd_db_version` DISABLE KEYS */;
-INSERT INTO `realmd_db_version` VALUES
-(NULL);
+insert  into `realmd_db_version`(`required_20150722_01_realmcharacters_remove_constraint`) values (NULL);
 /*!40000 ALTER TABLE `realmd_db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -46,29 +45,29 @@ DROP TABLE IF EXISTS `account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Account identifier',
-  `username` VARCHAR(32) NOT NULL DEFAULT '' COMMENT 'User name',
-  `sha_pass_hash` VARCHAR(40) NOT NULL DEFAULT '' COMMENT 'SHA1 password Hash',
-  `gmlevel` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `sessionkey` LONGTEXT,
-  `v` LONGTEXT,
-  `s` LONGTEXT COMMENT 'password salt',
-  `email` TEXT COMMENT 'Email address',
-  `joindate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Account Created Date',
-  `last_ip` VARCHAR(30) NOT NULL DEFAULT '0.0.0.0',
-  `failed_logins` INT(11) UNSIGNED NOT NULL DEFAULT '0',
-  `locked` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `last_login` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `active_realm_id` INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'last realm id',
-  `expansion` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'max game expansion',
-  `mutetime` BIGINT(40) UNSIGNED NOT NULL DEFAULT '0',
-  `locale` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `os` VARCHAR(3) DEFAULT '' COMMENT 'Client OS Version',
-  `playerBot` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'Whether the account is a playerbot account',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Account identifier',
+  `username` varchar(32) NOT NULL DEFAULT '' COMMENT 'User name',
+  `sha_pass_hash` varchar(40) NOT NULL DEFAULT '' COMMENT 'SHA1 password Hash',
+  `gmlevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `sessionkey` longtext,
+  `v` longtext,
+  `s` longtext COMMENT 'password salt',
+  `email` text COMMENT 'Email address',
+  `joindate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Account Created Date',
+  `last_ip` varchar(30) NOT NULL DEFAULT '0.0.0.0',
+  `failed_logins` int(11) unsigned NOT NULL DEFAULT '0',
+  `locked` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `last_login` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active_realm_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'last realm id',
+  `expansion` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'max game expansion',
+  `mutetime` bigint(40) unsigned NOT NULL DEFAULT '0',
+  `locale` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `os` varchar(3) DEFAULT '' COMMENT 'Client OS Version',
+  `playerBot` bit(1) NOT NULL DEFAULT b'0' COMMENT 'Whether the account is a playerbot account',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_username` (`username`),
   KEY `idx_gmlevel` (`gmlevel`)
-) ENGINE=MYISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Account System';
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Account System';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,10 +76,10 @@ CREATE TABLE `account` (
 
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
-INSERT  INTO `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) VALUES (1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2006-04-25 11:18:56','127.0.0.1',0,000,'0000-00-00 00:00:00',0,0,0,0,'','\0');
-INSERT  INTO `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) VALUES (2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2006-04-25 11:18:56','127.0.0.1',0,000,'0000-00-00 00:00:00',0,0,0,0,'','\0');
-INSERT  INTO `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) VALUES (3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2006-04-25 11:19:35','127.0.0.1',0,000,'0000-00-00 00:00:00',0,0,0,0,'','\0');
-INSERT  INTO `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) VALUES (4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2006-04-25 11:19:35','127.0.0.1',0,000,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2006-04-25 12:18:56','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2006-04-25 12:18:56','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2006-04-25 12:19:35','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2006-04-25 12:19:35','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
 
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -212,6 +211,7 @@ CREATE TABLE `dbdocsfields_localised` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `dbdocsfields_localised` */
+
 LOCK TABLES `dbdocsfields_localised` WRITE;
 /*!40000 ALTER TABLE `dbdocsfields_localised` DISABLE KEYS */;
 
@@ -293,6 +293,7 @@ CREATE TABLE `dbdocslanguage` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `dbdocslanguage` */
+
 LOCK TABLES `dbdocslanguage` WRITE;
 /*!40000 ALTER TABLE `dbdocslanguage` DISABLE KEYS */;
 
@@ -322,6 +323,7 @@ CREATE TABLE `dbdocssubtables` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `dbdocssubtables` */
+
 LOCK TABLES `dbdocssubtables` WRITE;
 /*!40000 ALTER TABLE `dbdocssubtables` DISABLE KEYS */;
 
@@ -351,6 +353,7 @@ CREATE TABLE `dbdocssubtables_localised` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `dbdocssubtables_localised` */
+
 LOCK TABLES `dbdocssubtables_localised` WRITE;
 /*!40000 ALTER TABLE `dbdocssubtables_localised` DISABLE KEYS */;
 
@@ -415,6 +418,7 @@ CREATE TABLE `dbdocstable_localised` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `dbdocstable_localised` */
+
 LOCK TABLES `dbdocstable_localised` WRITE;
 /*!40000 ALTER TABLE `dbdocstable_localised` DISABLE KEYS */;
 
@@ -473,7 +477,6 @@ CREATE TABLE `realmcharacters` (
   `numchars` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`realmid`,`acctid`),
   KEY `acctid` (`acctid`),
-  CONSTRAINT `realmcharacters_ibfk_2` FOREIGN KEY (`acctid`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `realmcharacters_ibfk_1` FOREIGN KEY (`realmid`) REFERENCES `realmlist` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Realm Character Tracker';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -524,28 +527,6 @@ INSERT INTO `realmlist` VALUES
 UNLOCK TABLES;
 
 --
--- table structure for warden DB log
---
-
-DROP TABLE IF EXISTS `warden_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `warden_log` (
-  `entry` INT(11) UNSIGNED AUTO_INCREMENT NOT NULL COMMENT 'Log entry ID',
-  `check` TINYINT(3) UNSIGNED NOT NULL COMMENT 'Failed Warden check ID',
-  `action` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Action taken (enum WardenActions)',
-  `account` INT(11) UNSIGNED NOT NULL COMMENT 'Account ID',
-  `guid` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Player GUID',
-  `map` INT(11) UNSIGNED COMMENT 'Map ID',
-  `position_x` FLOAT COMMENT 'Player position X',
-  `position_y` FLOAT COMMENT 'Player position Y',
-  `position_z` FLOAT COMMENT 'Player position Z',
-  `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of the log entry',
-  PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Warden log of failed checks';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `uptime`
 --
 
@@ -571,6 +552,30 @@ LOCK TABLES `uptime` WRITE;
 /*!40000 ALTER TABLE `uptime` DISABLE KEYS */;
 /*!40000 ALTER TABLE `uptime` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- table structure for warden_log
+--
+
+DROP TABLE IF EXISTS `warden_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `warden_log` (
+  `entry` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Log entry ID',
+  `check` smallint(5) unsigned NOT NULL COMMENT 'Failed Warden check ID',
+  `action` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Action taken (enum WardenActions)',
+  `account` int(11) unsigned NOT NULL COMMENT 'Account ID',
+  `guid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'Player GUID',
+  `map` int(11) unsigned DEFAULT NULL COMMENT 'Map ID',
+  `position_x` float DEFAULT NULL COMMENT 'Player position X',
+  `position_y` float DEFAULT NULL COMMENT 'Player position Y',
+  `position_z` float DEFAULT NULL COMMENT 'Player position Z',
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of the log entry',
+  PRIMARY KEY (`entry`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Warden log of failed checks';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
