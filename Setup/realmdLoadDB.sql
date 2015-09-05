@@ -19,21 +19,25 @@
 -- Table structure for table `realmd_db_version`
 --
 
-DROP TABLE IF EXISTS `realmd_db_version`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `realmd_db_version` (
-  `required_20150722_01_realmcharacters_remove_constraint` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Last applied sql update to DB';
+DROP TABLE IF EXISTS `db_version`;
+
+CREATE TABLE `db_version` (
+  `version` int(3) NOT NULL,
+  `structure` int(3) NOT NULL,
+  `content` int(3) NOT NULL,
+  `description` varchar(30) NOT NULL DEFAULT '',
+  `comment` varchar(150) DEFAULT '',
+  PRIMARY KEY (`version`,`structure`,`content`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='Used DB version notes';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `realmd_db_version`
 --
 
-LOCK TABLES `realmd_db_version` WRITE;
+LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `realmd_db_version` DISABLE KEYS */;
-insert  into `realmd_db_version`(`required_20150722_01_realmcharacters_remove_constraint`) values (NULL);
+insert  into `db_version`(`version`,`structure`,`content`,`description`,`comment`) values (21,1,0,'revision_refactor','');
 /*!40000 ALTER TABLE `realmd_db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -76,10 +80,10 @@ CREATE TABLE `account` (
 
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
-insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2006-04-25 12:18:56','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
-insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2006-04-25 12:18:56','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
-insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2006-04-25 12:19:35','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
-insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2006-04-25 12:19:35','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2006-04-25 13:18:56','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2006-04-25 13:18:56','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2006-04-25 13:19:35','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
+insert  into `account`(`id`,`username`,`sha_pass_hash`,`gmlevel`,`sessionkey`,`v`,`s`,`email`,`joindate`,`last_ip`,`failed_logins`,`locked`,`last_login`,`active_realm_id`,`expansion`,`mutetime`,`locale`,`os`,`playerBot`) values (4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2006-04-25 13:19:35','127.0.0.1',0,0,'0000-00-00 00:00:00',0,0,0,0,'','\0');
 
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -521,8 +525,8 @@ CREATE TABLE `realmlist` (
 
 LOCK TABLES `realmlist` WRITE;
 /*!40000 ALTER TABLE `realmlist` DISABLE KEYS */;
-INSERT INTO `realmlist` VALUES
-(1,'Mangos Server','127.0.0.1','127.0.0.1','255.255.255.0',8085,0,2,0,0,0,'5875 6005');
+insert  into `realmlist` (`id`,`name`,`address`,`localAddress`,`localSubnetMask`,`port`,`icon`,`realmflags`,`timezone`,`allowedSecurityLevel`,`population`,`realmbuilds`) values 
+(1,'Mangos Server','127.0.0.1','127.0.0.1','255.255.255.0',8085,0,2,0,0,0,'5875 6005 6141');
 /*!40000 ALTER TABLE `realmlist` ENABLE KEYS */;
 UNLOCK TABLES;
 
