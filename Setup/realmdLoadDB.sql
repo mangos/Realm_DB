@@ -8,7 +8,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET @OLD_TIME_ZONE=@@SESSION.TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
@@ -16,11 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `realmd_db_version`
+-- Table structure for table `db_version`
 --
 
 DROP TABLE IF EXISTS `db_version`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `db_version` (
   `version` int(3) NOT NULL,
   `structure` int(3) NOT NULL,
@@ -32,13 +33,13 @@ CREATE TABLE `db_version` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `realmd_db_version`
+-- Dumping data for table `db_version`
 --
 
 LOCK TABLES `db_version` WRITE;
-/*!40000 ALTER TABLE `realmd_db_version` DISABLE KEYS */;
-insert  into `db_version`(`version`,`structure`,`content`,`description`,`comment`) values (21,1,0,'revision_refactor','');
-/*!40000 ALTER TABLE `realmd_db_version` ENABLE KEYS */;
+/*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
+INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES (21,1,0,'revision_refactor','');
+/*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
