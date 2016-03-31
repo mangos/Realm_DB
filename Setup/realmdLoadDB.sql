@@ -2,7 +2,6 @@
 --
 -- Host: localhost    Database: realmd
 -- ------------------------------------------------------
--- Server version	5.5.34-0ubuntu0.13.10.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -38,7 +37,7 @@ CREATE TABLE `db_version` (
 
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
-INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES (21,1,0,'revision_refactor','');
+INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES (21,1,2,'dbdocs update','Base Database from 20150409 to Rel21_1_2');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,7 +131,7 @@ CREATE TABLE `dbdocsfields` (
   `fieldNotes` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Additional Field Notes',
   PRIMARY KEY (`fieldId`,`languageId`),
   KEY `fieldId` (`fieldId`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,6 +198,12 @@ insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fiel
 insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (56,0,'uptime','startstring','The time when the server started, formated as a readable string.','The time when the server started, formated as a readable string.');
 insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (57,0,'uptime','starttime','The time when the server was started, in Unix time.','The time when the server was started, in Unix time.');
 insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (58,0,'uptime','uptime','The uptime of the server, in seconds.','The uptime of the server, in seconds.');
+insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (61,0,'account','os','The Operating System of the connect client','The Operating System of the connect client. This is used by the Warden Module');
+insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (63,0,'account','os','The Operating System of the connect client','The Operating System of the connect client. This is used by the Warden Module');
+insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (64,0,'account','os','The Operating System of the connect client','The Operating System of the connect client. This is used by the Warden Module');
+insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (65,0,'account','playerBot','Determines whether the account is a User or a PlayerBot','Determines whether the account is a User or a PlayerBot.<br /><br />¬subtable:11¬');
+insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (66,0,'account','os','The Operating System of the connect client','The Operating System of the connect client. This is used by the Warden Module');
+insert  into `dbdocsfields`(`fieldId`,`languageId`,`tableName`,`fieldName`,`fieldComment`,`fieldNotes`) values (67,0,'account','playerBot','Determines whether the account is a User or a PlayerBot','Notes: LanguageId for this Language<br />¬subtable:3¬');
 /*!40000 ALTER TABLE `dbdocsfields` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -342,6 +347,7 @@ insert  into `dbdocssubtables`(`subTableId`,`languageId`,`subTableName`,`subTabl
 insert  into `dbdocssubtables`(`subTableId`,`languageId`,`subTableName`,`subTableContent`,`subTableTemplate`) values (8,0,'Population Level','<table border=\'1\' cellspacing=\'1\' cellpadding=\'3\' bgcolor=\'#f0f0f0\'>\r\n<tr bgcolor=\'#f0f0ff\'>\r\n<th><b>Population</b></th>\r\n<th align=\'left\'><b>Displayed Population Level</b></th>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>0.5</td><td align=\'left\' valign=\'middle\'>Low</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'><td align=\'center\' valign=\'middle\'>1.0</td><td align=\'left\' valign=\'middle\'>Medium</td></tr>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>2.0</td><td align=\'left\' valign=\'middle\'>High</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'></tr>\r\n</table>','Population|<Displayed Population Level\r\n0.5|Low\r\n1.0|Medium\r\n2.0|High');
 insert  into `dbdocssubtables`(`subTableId`,`languageId`,`subTableName`,`subTableContent`,`subTableTemplate`) values (9,0,'Realm Builds','<table border=\'1\' cellspacing=\'1\' cellpadding=\'3\' bgcolor=\'#f0f0f0\'>\r\n<tr bgcolor=\'#f0f0ff\'>\r\n<th><b>Core</b></th>\r\n<th align=\'left\'><b>Build Number(s)</b></th>\r\n<th align=\'left\'><b>Version Number</b></th>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>MangosZero</td><td align=\'left\' valign=\'middle\'>5875 6005 6141</td><td align=\'left\' valign=\'middle\'>Vanila 1.12.x</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'><td align=\'center\' valign=\'middle\'>MangosOne</td><td align=\'left\' valign=\'middle\'>8606</td><td align=\'left\' valign=\'middle\'>TBC 2.4.3</td></tr>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>MangosTwo</td><td align=\'left\' valign=\'middle\'>12340</td><td align=\'left\' valign=\'middle\'>WOTLK 3.3.5a</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'><td align=\'center\' valign=\'middle\'>MangosThree</td><td align=\'left\' valign=\'middle\'>15595</td><td align=\'left\' valign=\'middle\'>Cataclysm 4.3.4</td></tr>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>MangosFour</td><td align=\'left\' valign=\'middle\'>18414</td><td align=\'left\' valign=\'middle\'>Mists of Pandaria 5.4.8</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'></tr>\r\n</table>','Core|<Build Number(s)|<Version Number\r\nMangosZero|5875 6005 6141|Vanila 1.12.x\r\nMangosOne|8606|TBC 2.4.3\r\nMangosTwo|12340|WOTLK 3.3.5a\r\nMangosThree|15595|Cataclysm 4.3.4\r\nMangosFour|18414|Mists of Pandaria 5.4.8');
 insert  into `dbdocssubtables`(`subTableId`,`languageId`,`subTableName`,`subTableContent`,`subTableTemplate`) values (10,0,'Class Stats Levels','<table border=\'1\' cellspacing=\'1\' cellpadding=\'3\' bgcolor=\'#f0f0f0\'>\r\n<tr bgcolor=\'#f0f0ff\'>\r\n<th><b>Value</b></th>\r\n<th><b>Name</b></th>\r\n<th align=\'left\'><b>Description</b></th>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>1</td><td align=\'center\' valign=\'middle\'>Warrior</td><td align=\'left\' valign=\'middle\'>Has increased health and no mana</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'><td align=\'center\' valign=\'middle\'>2</td><td align=\'center\' valign=\'middle\'>Paladin</td><td align=\'left\' valign=\'middle\'>Has increased health and low mana</td></tr>\r\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>4</td><td align=\'center\' valign=\'middle\'>Rogue</td><td align=\'left\' valign=\'middle\'>Has increased damage, but lower armor</td></tr>\r\n<tr bgcolor=\'#FEFEFF\'><td align=\'center\' valign=\'middle\'>8</td><td align=\'center\' valign=\'middle\'>Mage</td><td align=\'left\' valign=\'middle\'>Has low health, but increased mana</td></tr>\r\n</table>','Value|Name|<Description\r\n1|Warrior|Has increased health and no mana\r\n2|Paladin|Has increased health and low mana\r\n4|Rogue|Has increased damage, but lower armor\r\n8|Mage|Has low health, but increased mana');
+insert  into `dbdocssubtables`(`subTableId`,`languageId`,`subTableName`,`subTableContent`,`subTableTemplate`) values (11,0,'Account Types','<table border=\'1\' cellspacing=\'1\' cellpadding=\'3\' bgcolor=\'#f0f0f0\'>\n<tr bgcolor=\'#f0f0ff\'>\n<th><b>Value</b></th>\n<th align=\'left\'><b>Account Type</b></th>\n<tr bgcolor=\'#FFFFEE\'><td align=\'center\' valign=\'middle\'>0</td><td align=\'left\' valign=\'middle\'>Normal User</td></tr>\n<tr bgcolor=\'#FEFEFF\'><td align=\'center\' valign=\'middle\'>1</td><td align=\'left\' valign=\'middle\'>Playerbot account</td></tr>\n</table>\n','Value|<Account Type\n0|Normal User\n1|Playerbot account');
 /*!40000 ALTER TABLE `dbdocssubtables` ENABLE KEYS */;
 UNLOCK TABLES;
 
