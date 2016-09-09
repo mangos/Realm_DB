@@ -572,7 +572,7 @@ CREATE TABLE `warden_log` (
   `position_z` float DEFAULT NULL COMMENT 'Player position Z',
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date of the log entry',
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Warden log of failed checks';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Warden log of failed checks';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
