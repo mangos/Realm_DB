@@ -530,8 +530,8 @@ CREATE TABLE `realmlist` (
 --
 
 LOCK TABLES `realmlist` WRITE;
-/*!40000 ALTER TABLE `uptime` DISABLE KEYS */;
-/*!40000 ALTER TABLE `uptime` ENABLE KEYS */;
+/*!40000 ALTER TABLE `realmlist` DISABLE KEYS */;
+/*!40000 ALTER TABLE `realmlist` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
