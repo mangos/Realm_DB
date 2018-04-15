@@ -60,13 +60,13 @@ BEGIN
         -- Individual DB Docs have now been replace by a centralised DB Docs Database
         -- now managed by the MAGNET application
 
-        DROP TABLE dbdocsfields;
-        DROP TABLE dbdocsfields_localised;
-        DROP TABLE dbdocstable;
-        DROP TABLE dbdocstable_localised;
-        DROP TABLE dbdocslanguage;
-        DROP TABLE dbdocssubtables;
-        DROP TABLE dbdocssubtables_localised;
+	DROP TABLE IF EXISTS dbdocsfields;
+        DROP TABLE IF EXISTS dbdocsfields_localised;
+        DROP TABLE IF EXISTS dbdocstable;
+        DROP TABLE IF EXISTS dbdocstable_localised;
+        DROP TABLE IF EXISTS dbdocslanguage;
+        DROP TABLE IF EXISTS dbdocssubtables;
+        DROP TABLE IF EXISTS dbdocssubtables_localised;
 
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
         -- -- PLACE UPDATE SQL ABOVE -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
