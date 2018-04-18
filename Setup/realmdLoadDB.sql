@@ -37,7 +37,7 @@ CREATE TABLE `db_version` (
 
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
-INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES (21,1,3,'Remove field from dbDocs','Base Database from 20150409 to Rel21_1_3');
+INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES (21,1,4,'Remove dbDocs','Base Database from 20150409 to Rel21_1_4');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
