@@ -191,7 +191,7 @@ CREATE TABLE `realmlist` (
   `realmbuilds` VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'The accepted client builds that the realm will accept.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_name` (`name`)
-) ENGINE=INNODB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Realm System';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Realm System';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
