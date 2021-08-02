@@ -58,7 +58,7 @@ CREATE TABLE `account` (
   `v` LONGTEXT DEFAULT NULL COMMENT 'The validated Hash Value.',
   `s` LONGTEXT DEFAULT NULL COMMENT 'Password ''Salt'' Value.',
   `email` TEXT DEFAULT NULL COMMENT 'The e-mail address associated with this account.',
-  `joindate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() COMMENT 'The date when the account was created.',
+  `joindate` TIMESTAMP NULL DEFAULT NULL COMMENT 'The date when the account was created.',
   `last_ip` VARCHAR(30) NOT NULL DEFAULT '0.0.0.0' COMMENT 'The last IP used by the person who last logged into the account.',
   `failed_logins` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The number of failed logins attempted on the account.',
   `locked` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Indicates whether the account has been locked or not.',
