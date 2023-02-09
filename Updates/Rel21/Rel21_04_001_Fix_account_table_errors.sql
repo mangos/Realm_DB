@@ -41,16 +41,32 @@ BEGIN
 
         -- UPDATE THE DB VERSION
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+
+        -- Source: https://stackoverflow.com/questions/35565128/mysql-incorrect-datetime-value-0000-00-00-000000
+
         INSERT INTO `db_version` VALUES (@cNewVersion, @cNewStructure, @cNewContent, @cNewDescription, @cNewComment);
         SET @cNewResult := (SELECT description FROM db_version WHERE `version`=@cNewVersion AND `structure`=@cNewStructure AND `content`=@cNewContent);
 
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
         -- -- PLACE UPDATE SQL BELOW -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+        
+        SET @old_sql_mode := @@sql_mode ;
 
--- realmd
-UPDATE `account` SET `last_login` = CURRENT_TIMESTAMP() WHERE `last_login`='0000-00-00 00:00:00';
-ALTER TABLE `account` MODIFY COLUMN `last_login` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() COMMENT 'The date when the account was last logged into.';
+        -- derive a new value by removing NO_ZERO_DATE and NO_ZERO_IN_DATE
+        SET @new_sql_mode := @old_sql_mode ;
+        SET @new_sql_mode := TRIM(BOTH ',' FROM REPLACE(CONCAT(',',@new_sql_mode,','),',NO_ZERO_DATE,'  ,','));
+        SET @new_sql_mode := TRIM(BOTH ',' FROM REPLACE(CONCAT(',',@new_sql_mode,','),',NO_ZERO_IN_DATE,',','));
+        SET @@sql_mode := @new_sql_mode ;
+
+        -- perform the operation that errors due to "zero dates"
+        -- realmd
+        UPDATE `account` SET `last_login` = CURRENT_TIMESTAMP() WHERE `last_login`='0000-00-00 00:00:00';
+        ALTER TABLE `account` MODIFY COLUMN `last_login` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() COMMENT 'The date when the account was last logged into.';
+
+        -- when we are done with required operations, we can revert back
+        -- to the original sql_mode setting, from the value we saved
+        SET @@sql_mode := @old_sql_mode ;
 
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
         -- -- PLACE UPDATE SQL ABOVE -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
