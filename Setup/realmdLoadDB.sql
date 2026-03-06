@@ -38,7 +38,7 @@ CREATE TABLE `db_version` (
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
 INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES 
-(22,1,1,'Release 22','Release 22');
+(22,3,1,'2026 MaNGOS','2026 MaNGOS');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
