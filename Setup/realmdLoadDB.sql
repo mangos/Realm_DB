@@ -38,7 +38,7 @@ CREATE TABLE `db_version` (
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
 INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES 
-(22,1,1,'Release 22','Release 22');
+(22,2,1,'Exact client locale','Preserve the exact authenticated client locale');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67,6 +67,7 @@ CREATE TABLE `account` (
   `expansion` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Which maximum expansion content a user has access to.',
   `mutetime` BIGINT(40) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The time, in Unix time, when the account will be unmuted.',
   `locale` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The locale used by the client logged into this account.',
+  `client_locale` CHAR(4) NOT NULL DEFAULT 'enUS' COMMENT 'The exact locale reported by the authenticated client.',
   `os` VARCHAR(3) DEFAULT '' COMMENT 'The Operating System of the connected client',
   `playerBot` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'Determines whether the account is a User or a PlayerBot',
   PRIMARY KEY (`id`),
@@ -81,11 +82,11 @@ CREATE TABLE `account` (
 
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
-INSERT INTO `account` (`id`, `username`, `sha_pass_hash`, `gmlevel`, `sessionkey`, `v`, `s`, `email`, `joindate`, `last_ip`, `failed_logins`, `locked`, `last_login`, `active_realm_id`, `expansion`, `mutetime`, `locale`, `os`, `playerBot`) VALUES 
-(1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2021-01-01 13:18:56','127.0.0.1',0,0,'2021-01-01 13:18:56',0,0,0,0,'','\0'),
-(2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2021-01-01 13:18:56','127.0.0.1',0,0,'2021-01-01 13:18:56',0,0,0,0,'','\0'),
-(3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2021-01-01 13:19:35','127.0.0.1',0,0,'2021-01-01 13:19:35',0,0,0,0,'','\0'),
-(4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2021-01-01 13:19:35','127.0.0.1',0,0,'2021-01-01 13:19:35',0,0,0,0,'','\0');
+INSERT INTO `account` (`id`, `username`, `sha_pass_hash`, `gmlevel`, `sessionkey`, `v`, `s`, `email`, `joindate`, `last_ip`, `failed_logins`, `locked`, `last_login`, `active_realm_id`, `expansion`, `mutetime`, `locale`, `client_locale`, `os`, `playerBot`) VALUES
+(1,'ADMINISTRATOR','a34b29541b87b7e4823683ce6c7bf6ae68beaaac',3,'','0','0','','2021-01-01 13:18:56','127.0.0.1',0,0,'2021-01-01 13:18:56',0,0,0,0,'enUS','','\0'),
+(2,'GAMEMASTER','7841e21831d7c6bc0b57fbe7151eb82bd65ea1f9',2,'','0','0','','2021-01-01 13:18:56','127.0.0.1',0,0,'2021-01-01 13:18:56',0,0,0,0,'enUS','','\0'),
+(3,'MODERATOR','a7f5fbff0b4eec2d6b6e78e38e8312e64d700008',1,'','0','0','','2021-01-01 13:19:35','127.0.0.1',0,0,'2021-01-01 13:19:35',0,0,0,0,'enUS','','\0'),
+(4,'PLAYER','3ce8a96d17c5ae88a30681024e86279f1a38c041',0,'','0','0','','2021-01-01 13:19:35','127.0.0.1',0,0,'2021-01-01 13:19:35',0,0,0,0,'enUS','','\0');
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
 --
