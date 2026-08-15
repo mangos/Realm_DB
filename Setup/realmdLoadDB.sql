@@ -38,7 +38,7 @@ CREATE TABLE `db_version` (
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
 INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES 
-(22,2,1,'Exact client locale','Preserve the exact authenticated client locale');
+(22,3,1,'Warden incidents','Persist confirmed Warden memory enforcement incidents');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,6 +115,42 @@ CREATE TABLE `account_banned` (
 LOCK TABLES `account_banned` WRITE;
 /*!40000 ALTER TABLE `account_banned` DISABLE KEYS */;
 /*!40000 ALTER TABLE `account_banned` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Table structure for table `warden_incident`
+--
+
+DROP TABLE IF EXISTS `warden_incident`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `warden_incident` (
+  `incident_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `account_id` INT UNSIGNED NOT NULL,
+  `occurred_at` BIGINT UNSIGNED NOT NULL,
+  `realm_id` INT UNSIGNED NOT NULL,
+  `client_build` SMALLINT UNSIGNED NOT NULL,
+  `client_locale` CHAR(4) NOT NULL,
+  `check_id` INT UNSIGNED NOT NULL,
+  `outcome` TINYINT UNSIGNED NOT NULL,
+  `ban_triggered` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`incident_id`),
+  KEY `idx_warden_incident_account_time` (`account_id`, `occurred_at`),
+  CONSTRAINT `warden_incident_account_fk`
+    FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+  COMMENT='Confirmed Warden memory enforcement incidents';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `warden_incident`
+--
+
+LOCK TABLES `warden_incident` WRITE;
+/*!40000 ALTER TABLE `warden_incident` DISABLE KEYS */;
+/*!40000 ALTER TABLE `warden_incident` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
