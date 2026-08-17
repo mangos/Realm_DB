@@ -38,7 +38,7 @@ CREATE TABLE `db_version` (
 LOCK TABLES `db_version` WRITE;
 /*!40000 ALTER TABLE `db_version` DISABLE KEYS */;
 INSERT  INTO `db_version`(`version`,`structure`,`content`,`description`,`comment`) VALUES 
-(22,3,1,'Warden incidents','Persist confirmed Warden memory enforcement incidents');
+(22,4,1,'Warden audit','Separate Warden audit from actionable incidents');
 /*!40000 ALTER TABLE `db_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,9 +131,13 @@ CREATE TABLE `warden_incident` (
   `occurred_at` BIGINT UNSIGNED NOT NULL,
   `realm_id` INT UNSIGNED NOT NULL,
   `client_build` SMALLINT UNSIGNED NOT NULL,
-  `client_locale` CHAR(4) NOT NULL,
+  `client_platform` VARBINARY(4) NOT NULL,
+  `client_locale` BINARY(4) NOT NULL,
   `check_id` INT UNSIGNED NOT NULL,
-  `outcome` TINYINT UNSIGNED NOT NULL,
+  `check_type` TINYINT UNSIGNED NOT NULL,
+  `evidence_class` TINYINT UNSIGNED NOT NULL,
+  `outcome` TINYINT UNSIGNED NOT NULL
+    COMMENT '1=Mismatch, 2=Historical Unavailable',
   `ban_triggered` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`incident_id`),
   KEY `idx_warden_incident_account_time` (`account_id`, `occurred_at`),
@@ -141,7 +145,7 @@ CREATE TABLE `warden_incident` (
     FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
-  COMMENT='Confirmed Warden memory enforcement incidents';
+  COMMENT='Confirmed actionable Warden enforcement incidents';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,6 +155,46 @@ CREATE TABLE `warden_incident` (
 LOCK TABLES `warden_incident` WRITE;
 /*!40000 ALTER TABLE `warden_incident` DISABLE KEYS */;
 /*!40000 ALTER TABLE `warden_incident` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Table structure for table `warden_audit`
+--
+
+DROP TABLE IF EXISTS `warden_audit`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `warden_audit` (
+  `audit_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `account_id` INT UNSIGNED NOT NULL,
+  `occurred_at` BIGINT UNSIGNED NOT NULL,
+  `realm_id` INT UNSIGNED NOT NULL,
+  `client_build` SMALLINT UNSIGNED NOT NULL,
+  `client_platform` VARBINARY(4) NOT NULL,
+  `client_locale` BINARY(4) NOT NULL,
+  `check_id` INT UNSIGNED NOT NULL,
+  `check_type` TINYINT UNSIGNED NOT NULL,
+  `evidence_class` TINYINT UNSIGNED NOT NULL,
+  `outcome` TINYINT UNSIGNED NOT NULL
+    COMMENT '1=Mismatch, 2=Unavailable',
+  PRIMARY KEY (`audit_id`),
+  KEY `idx_warden_audit_account_time` (`account_id`,`occurred_at`),
+  KEY `idx_warden_audit_check_time` (`check_id`,`occurred_at`),
+  CONSTRAINT `warden_audit_account_fk`
+    FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+  COMMENT='Confirmed non-actionable Warden findings';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `warden_audit`
+--
+
+LOCK TABLES `warden_audit` WRITE;
+/*!40000 ALTER TABLE `warden_audit` DISABLE KEYS */;
+/*!40000 ALTER TABLE `warden_audit` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -264,37 +308,6 @@ CREATE TABLE `uptime` (
 LOCK TABLES `uptime` WRITE;
 /*!40000 ALTER TABLE `uptime` DISABLE KEYS */;
 /*!40000 ALTER TABLE `uptime` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `warden_log`
---
-
-DROP TABLE IF EXISTS `warden_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `warden_log` (
-  `entry` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Log entry ID',
-  `check` SMALLINT(5) UNSIGNED NOT NULL COMMENT 'Failed Warden check ID',
-  `action` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Action taken (enum WardenActions)',
-  `account` INT(11) UNSIGNED NOT NULL COMMENT 'The account ID of the player.',
-  `guid` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Player GUID',
-  `map` INT(11) UNSIGNED DEFAULT NULL COMMENT 'The map id. (See map.dbc)',
-  `position_x` FLOAT DEFAULT NULL COMMENT 'The x location of the player.',
-  `position_y` FLOAT DEFAULT NULL COMMENT 'The y location of the player.',
-  `position_z` FLOAT DEFAULT NULL COMMENT 'The z location of the player.',
-  `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() COMMENT 'The date/time when the log entry was raised, in Unix time.',
-  PRIMARY KEY (`entry`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Warden log of failed checks';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Data for the table `warden_log`
---
-
-LOCK TABLES `warden_log` WRITE;
-/*!40000 ALTER TABLE `warden_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `warden_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
