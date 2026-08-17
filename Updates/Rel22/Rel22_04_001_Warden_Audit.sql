@@ -59,10 +59,7 @@ BEGIN
             COMMENT '1=Mismatch, 2=Unavailable',
           PRIMARY KEY (`audit_id`),
           KEY `idx_warden_audit_account_time` (`account_id`,`occurred_at`),
-          KEY `idx_warden_audit_check_time` (`check_id`,`occurred_at`),
-          CONSTRAINT `warden_audit_account_fk`
-            FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
-            ON DELETE CASCADE ON UPDATE CASCADE
+          KEY `idx_warden_audit_check_time` (`check_id`,`occurred_at`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
           COMMENT='Confirmed non-actionable Warden findings';
 

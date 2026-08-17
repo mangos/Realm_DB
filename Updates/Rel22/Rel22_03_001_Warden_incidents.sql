@@ -55,10 +55,7 @@ BEGIN
           `outcome` TINYINT UNSIGNED NOT NULL,
           `ban_triggered` TINYINT UNSIGNED NOT NULL DEFAULT 0,
           PRIMARY KEY (`incident_id`),
-          KEY `idx_warden_incident_account_time` (`account_id`, `occurred_at`),
-          CONSTRAINT `warden_incident_account_fk`
-            FOREIGN KEY (`account_id`) REFERENCES `account` (`id`)
-            ON DELETE CASCADE ON UPDATE CASCADE
+          KEY `idx_warden_incident_account_time` (`account_id`, `occurred_at`)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
           COMMENT='Confirmed Warden memory enforcement incidents';
 
