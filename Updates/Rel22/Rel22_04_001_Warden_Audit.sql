@@ -39,6 +39,9 @@ BEGIN
     IF (@cCurResult = @cOldResult) THEN
         START TRANSACTION;
 
+        -- At 22/03/001 this name is unowned. Remove only residue from a
+        -- previously failed CREATE so the update can be attempted again.
+        DROP TABLE IF EXISTS `warden_audit`;
         CREATE TABLE `warden_audit` (
           `audit_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
           `account_id` INT UNSIGNED NOT NULL,

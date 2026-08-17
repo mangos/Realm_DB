@@ -8,8 +8,14 @@ DELIMITER $$
 
 CREATE PROCEDURE `update_mangos`()
 BEGIN
-    DECLARE bRollback BOOL DEFAULT FALSE;
-    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET `bRollback` = TRUE;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SHOW ERRORS;
+        SELECT '* UPDATE FAILED *' AS `===== Status =====`,
+               @cCurResult AS `===== DB is on Version: =====`;
+        RESIGNAL;
+    END;
 
     SET @cCurVersion := (SELECT `version` FROM `db_version` ORDER BY `version` DESC, `structure` DESC, `content` DESC LIMIT 0,1);
     SET @cCurStructure := (SELECT `structure` FROM `db_version` ORDER BY `version` DESC, `structure` DESC, `content` DESC LIMIT 0,1);
@@ -32,6 +38,9 @@ BEGIN
     IF (@cCurResult = @cOldResult) THEN
         START TRANSACTION;
 
+        -- At 22/02/001 this name is unowned. Remove only residue from a
+        -- previously failed CREATE so the update can be attempted again.
+        DROP TABLE IF EXISTS `warden_incident`;
         CREATE TABLE `warden_incident` (
           `incident_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
           `account_id` INT UNSIGNED NOT NULL,
@@ -50,19 +59,14 @@ BEGIN
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
           COMMENT='Confirmed Warden memory enforcement incidents';
 
-        IF bRollback = FALSE THEN
-            INSERT INTO `db_version` VALUES (@cNewVersion, @cNewStructure, @cNewContent, @cNewDescription, @cNewComment);
-            SET @cNewResult := (SELECT `description` FROM `db_version` WHERE `version` = @cNewVersion AND `structure` = @cNewStructure AND `content` = @cNewContent);
-        END IF;
-
-        IF bRollback = TRUE THEN
-            ROLLBACK;
-            SHOW ERRORS;
-            SELECT '* UPDATE FAILED *' AS `===== Status =====`, @cCurResult AS `===== DB is on Version: =====`;
-        ELSE
-            COMMIT;
-            SELECT '* UPDATE COMPLETE *' AS `===== Status =====`, @cNewResult AS `===== DB is now on Version =====`;
-        END IF;
+        INSERT INTO `db_version` VALUES (@cNewVersion, @cNewStructure,
+            @cNewContent, @cNewDescription, @cNewComment);
+        SET @cNewResult := (SELECT `description` FROM `db_version`
+            WHERE `version` = @cNewVersion AND `structure` = @cNewStructure
+              AND `content` = @cNewContent);
+        COMMIT;
+        SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,
+               @cNewResult AS `===== DB is now on Version =====`;
     ELSE
         IF (@cCurResult = @cNewResult) THEN
             SELECT '* UPDATE SKIPPED *' AS `===== Status =====`, @cCurResult AS `===== DB is already on Version =====`;
