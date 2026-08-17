@@ -85,16 +85,28 @@ BEGIN
                 -- Write the version marker before destructive cleanup. DROP
                 -- TABLE implicitly commits the pending insert before deleting
                 -- anything, while a failed insert never enters this branch.
-                DROP TABLE IF EXISTS `warden_log`;
-
                 SET @cNewResult := (SELECT `description` FROM `db_version` WHERE `version`=@cNewVersion AND `structure`=@cNewStructure AND `content`=@cNewContent);
-
-                SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,@cNewResult AS `===== DB is now on Version =====`;
+                DROP TABLE IF EXISTS `warden_log`;
+                IF bRollback = TRUE THEN
+                    SHOW ERRORS;
+                    SELECT '* UPDATE CLEANUP FAILED *' AS `===== Status =====`,@cNewResult AS `===== DB is on Version: =====`;
+                ELSE
+                    SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,@cNewResult AS `===== DB is now on Version =====`;
+                END IF;
             END IF;
         END IF;
     ELSE    -- Current version is not the expected version
         IF (@cCurResult = @cNewResult) THEN    -- Does the current version match the new version
-            SELECT '* UPDATE SKIPPED *' AS `===== Status =====`,@cCurResult AS `===== DB is already on Version =====`;
+            -- A prior post-marker cleanup failure leaves warden_log as its own
+            -- durable retry signal. Re-running this update retries only that
+            -- cleanup while preserving the already-applied version marker.
+            DROP TABLE IF EXISTS `warden_log`;
+            IF bRollback = TRUE THEN
+                SHOW ERRORS;
+                SELECT '* UPDATE CLEANUP FAILED *' AS `===== Status =====`,@cCurResult AS `===== DB is on Version: =====`;
+            ELSE
+                SELECT '* UPDATE SKIPPED *' AS `===== Status =====`,@cCurResult AS `===== DB is already on Version =====`;
+            END IF;
         ELSE    -- Current version is not one related to this update
             IF(@cCurResult IS NULL) THEN    -- Something has gone wrong
                 SELECT '* UPDATE FAILED *' AS `===== Status =====`,'Unable to locate DB Version Information' AS `============= Error Message =============`;
