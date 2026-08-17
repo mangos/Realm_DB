@@ -50,14 +50,18 @@ BEGIN
           `occurred_at` BIGINT UNSIGNED NOT NULL,
           `realm_id` INT UNSIGNED NOT NULL,
           `client_build` SMALLINT UNSIGNED NOT NULL,
-          `client_locale` CHAR(4) NOT NULL,
+          `client_platform` VARBINARY(4) NOT NULL,
+          `client_locale` BINARY(4) NOT NULL,
           `check_id` INT UNSIGNED NOT NULL,
-          `outcome` TINYINT UNSIGNED NOT NULL,
+          `check_type` TINYINT UNSIGNED NOT NULL,
+          `evidence_class` TINYINT UNSIGNED NOT NULL,
+          `outcome` TINYINT UNSIGNED NOT NULL
+            COMMENT '1=Mismatch, 2=Historical Unavailable',
           `ban_triggered` TINYINT UNSIGNED NOT NULL DEFAULT 0,
           PRIMARY KEY (`incident_id`),
-          KEY `idx_warden_incident_account_time` (`account_id`, `occurred_at`)
-        ) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
-          COMMENT='Confirmed Warden memory enforcement incidents';
+          KEY `idx_warden_incident_account_time` (`account_id`,`occurred_at`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+          COMMENT='Confirmed actionable Warden enforcement incidents';
 
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
         -- -- PLACE UPDATE SQL ABOVE -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
