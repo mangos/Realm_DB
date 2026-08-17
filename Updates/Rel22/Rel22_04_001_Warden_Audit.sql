@@ -78,18 +78,19 @@ BEGIN
             -- UPDATE THE DB VERSION
             -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
             INSERT INTO `db_version` VALUES (@cNewVersion, @cNewStructure, @cNewContent, @cNewDescription, @cNewComment);
-
-            -- Write the version marker before destructive cleanup. DROP TABLE
-            -- implicitly commits the pending insert before deleting anything,
-            -- while a failed version insert leaves bRollback set and preserves
-            -- the legacy evidence for a retry.
-            IF bRollback = FALSE THEN
+            IF bRollback = TRUE THEN
+                SHOW ERRORS;
+                SELECT '* UPDATE FAILED *' AS `===== Status =====`,@cCurResult AS `===== DB is on Version: =====`;
+            ELSE
+                -- Write the version marker before destructive cleanup. DROP
+                -- TABLE implicitly commits the pending insert before deleting
+                -- anything, while a failed insert never enters this branch.
                 DROP TABLE IF EXISTS `warden_log`;
+
+                SET @cNewResult := (SELECT `description` FROM `db_version` WHERE `version`=@cNewVersion AND `structure`=@cNewStructure AND `content`=@cNewContent);
+
+                SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,@cNewResult AS `===== DB is now on Version =====`;
             END IF;
-
-            SET @cNewResult := (SELECT `description` FROM `db_version` WHERE `version`=@cNewVersion AND `structure`=@cNewStructure AND `content`=@cNewContent);
-
-            SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,@cNewResult AS `===== DB is now on Version =====`;
         END IF;
     ELSE    -- Current version is not the expected version
         IF (@cCurResult = @cNewResult) THEN    -- Does the current version match the new version
