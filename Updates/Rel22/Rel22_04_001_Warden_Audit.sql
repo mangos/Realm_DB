@@ -117,7 +117,12 @@ BEGIN
           MODIFY COLUMN `check_type` TINYINT UNSIGNED NOT NULL,
           MODIFY COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL;
 
-        DROP TABLE IF EXISTS `warden_log`;
+        -- Do not destroy legacy evidence if any earlier statement failed. The
+        -- stock CONTINUE handler records the failure and allows control to
+        -- reach this point before the final rollback branch.
+        IF bRollback = FALSE THEN
+            DROP TABLE IF EXISTS `warden_log`;
+        END IF;
 
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
         -- -- PLACE UPDATE SQL ABOVE -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
