@@ -64,14 +64,45 @@ BEGIN
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
           COMMENT='Confirmed non-actionable Warden findings';
 
+        -- Each addition is conditional because DDL commits immediately. A
+        -- retry after any later failure must accept columns already applied.
+        IF NOT EXISTS (
+            SELECT 1 FROM `information_schema`.`columns`
+            WHERE `table_schema` = DATABASE()
+              AND `table_name` = 'warden_incident'
+              AND `column_name` = 'client_platform'
+        ) THEN
+            ALTER TABLE `warden_incident`
+              ADD COLUMN `client_platform` VARBINARY(4) NOT NULL
+                DEFAULT 0x57696E AFTER `client_build`;
+        END IF;
+        IF NOT EXISTS (
+            SELECT 1 FROM `information_schema`.`columns`
+            WHERE `table_schema` = DATABASE()
+              AND `table_name` = 'warden_incident'
+              AND `column_name` = 'check_type'
+        ) THEN
+            ALTER TABLE `warden_incident`
+              ADD COLUMN `check_type` TINYINT UNSIGNED NOT NULL
+                DEFAULT 243 AFTER `check_id`;
+        END IF;
+        IF NOT EXISTS (
+            SELECT 1 FROM `information_schema`.`columns`
+            WHERE `table_schema` = DATABASE()
+              AND `table_name` = 'warden_incident'
+              AND `column_name` = 'evidence_class'
+        ) THEN
+            ALTER TABLE `warden_incident`
+              ADD COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL
+                DEFAULT 1 AFTER `check_type`;
+        END IF;
+
         ALTER TABLE `warden_incident`
-          ADD COLUMN `client_platform` VARBINARY(4) NOT NULL DEFAULT 0x57696E
-            AFTER `client_build`,
+          MODIFY COLUMN `client_platform` VARBINARY(4) NOT NULL
+            DEFAULT 0x57696E,
           MODIFY COLUMN `client_locale` BINARY(4) NOT NULL,
-          ADD COLUMN `check_type` TINYINT UNSIGNED NOT NULL DEFAULT 243
-            AFTER `check_id`,
-          ADD COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL DEFAULT 1
-            AFTER `check_type`,
+          MODIFY COLUMN `check_type` TINYINT UNSIGNED NOT NULL DEFAULT 243,
+          MODIFY COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL DEFAULT 1,
           MODIFY COLUMN `outcome` TINYINT UNSIGNED NOT NULL
             COMMENT '1=Mismatch, 2=Historical Unavailable',
           COMMENT='Confirmed actionable Warden enforcement incidents';
@@ -82,9 +113,9 @@ BEGIN
             `evidence_class` = CASE WHEN `check_id` = 1566 THEN 2 ELSE 1 END;
 
         ALTER TABLE `warden_incident`
-          ALTER COLUMN `client_platform` DROP DEFAULT,
-          ALTER COLUMN `check_type` DROP DEFAULT,
-          ALTER COLUMN `evidence_class` DROP DEFAULT;
+          MODIFY COLUMN `client_platform` VARBINARY(4) NOT NULL,
+          MODIFY COLUMN `check_type` TINYINT UNSIGNED NOT NULL,
+          MODIFY COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL;
 
         DROP TABLE IF EXISTS `warden_log`;
 
