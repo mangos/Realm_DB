@@ -6,7 +6,7 @@ DROP PROCEDURE IF EXISTS `update_mangos`;
 
 DELIMITER $$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_mangos`()
+CREATE PROCEDURE `update_mangos`()
 BEGIN
     DECLARE bRollback BOOL  DEFAULT FALSE ;
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET `bRollback` = TRUE;
@@ -66,13 +66,39 @@ BEGIN
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
           COMMENT='Confirmed non-actionable Warden findings';
 
-        ALTER TABLE `warden_incident`
-          ADD COLUMN `client_platform` VARBINARY(4) NOT NULL
-            DEFAULT 0x57696E AFTER `client_build`,
-          ADD COLUMN `check_type` TINYINT UNSIGNED NOT NULL
-            DEFAULT 243 AFTER `check_id`,
-          ADD COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL
-            DEFAULT 1 AFTER `check_type`;
+        -- These additions are individually guarded because ALTER TABLE commits
+        -- immediately. A retry after any later failure must accept columns that
+        -- were already applied while the database remained at 22/03/001.
+        IF NOT EXISTS (
+            SELECT 1 FROM `information_schema`.`columns`
+            WHERE `table_schema` = DATABASE()
+              AND `table_name` = 'warden_incident'
+              AND `column_name` = 'client_platform'
+        ) THEN
+            ALTER TABLE `warden_incident`
+              ADD COLUMN `client_platform` VARBINARY(4) NOT NULL
+                DEFAULT 0x57696E AFTER `client_build`;
+        END IF;
+        IF NOT EXISTS (
+            SELECT 1 FROM `information_schema`.`columns`
+            WHERE `table_schema` = DATABASE()
+              AND `table_name` = 'warden_incident'
+              AND `column_name` = 'check_type'
+        ) THEN
+            ALTER TABLE `warden_incident`
+              ADD COLUMN `check_type` TINYINT UNSIGNED NOT NULL
+                DEFAULT 243 AFTER `check_id`;
+        END IF;
+        IF NOT EXISTS (
+            SELECT 1 FROM `information_schema`.`columns`
+            WHERE `table_schema` = DATABASE()
+              AND `table_name` = 'warden_incident'
+              AND `column_name` = 'evidence_class'
+        ) THEN
+            ALTER TABLE `warden_incident`
+              ADD COLUMN `evidence_class` TINYINT UNSIGNED NOT NULL
+                DEFAULT 1 AFTER `check_type`;
+        END IF;
 
         ALTER TABLE `warden_incident`
           MODIFY COLUMN `client_platform` VARBINARY(4) NOT NULL
