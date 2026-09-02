@@ -155,25 +155,41 @@ BEGIN
         END IF;
 
         -- Before this migration client_platform held the Warden architecture.
-        -- Convert only that legacy vocabulary, including rows written by an
-        -- old core between an interrupted ALTER and this resumable retry.
+        -- x86/x64 therefore prove a Windows client, but legacy unk discarded
+        -- the authenticated operating system and must remain unknown. Convert
+        -- only that vocabulary, including rows written by an old core between
+        -- an interrupted ALTER and this resumable retry.
         UPDATE `warden_audit`
            SET `client_architecture` = CASE
                    WHEN BINARY `client_architecture` = BINARY 'unk'
+                    AND (BINARY `client_platform` = BINARY 'x86'
+                      OR BINARY `client_platform` = BINARY 'x64')
                        THEN `client_platform`
                    ELSE `client_architecture`
                END,
-               `client_platform` = 'Win'
+               `client_platform` = CASE
+                   WHEN BINARY `client_platform` = BINARY 'x86'
+                     OR BINARY `client_platform` = BINARY 'x64'
+                       THEN 'Win'
+                   ELSE 'unk'
+               END
          WHERE BINARY `client_platform` = BINARY 'x86'
             OR BINARY `client_platform` = BINARY 'x64'
             OR BINARY `client_platform` = BINARY 'unk';
         UPDATE `warden_incident`
            SET `client_architecture` = CASE
                    WHEN BINARY `client_architecture` = BINARY 'unk'
+                    AND (BINARY `client_platform` = BINARY 'x86'
+                      OR BINARY `client_platform` = BINARY 'x64')
                        THEN `client_platform`
                    ELSE `client_architecture`
                END,
-               `client_platform` = 'Win'
+               `client_platform` = CASE
+                   WHEN BINARY `client_platform` = BINARY 'x86'
+                     OR BINARY `client_platform` = BINARY 'x64'
+                       THEN 'Win'
+                   ELSE 'unk'
+               END
          WHERE BINARY `client_platform` = BINARY 'x86'
             OR BINARY `client_platform` = BINARY 'x64'
             OR BINARY `client_platform` = BINARY 'unk';
