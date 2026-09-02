@@ -163,6 +163,10 @@ BEGIN
                 SET MESSAGE_TEXT = 'warden_incident.client_variant has an unexpected schema';
         END IF;
 
+        -- ALTER TABLE implicitly committed the outer template transaction.
+        -- Restart it, and never let a failed preflight reach the conversion.
+        START TRANSACTION;
+        IF bRollback = FALSE THEN
         -- Before this migration client_platform held the Warden architecture.
         -- x86/x64 therefore prove a Windows client, but legacy unk discarded
         -- the authenticated operating system and must remain unknown. Convert
@@ -202,6 +206,7 @@ BEGIN
          WHERE BINARY `client_platform` = BINARY 'x86'
             OR BINARY `client_platform` = BINARY 'x64'
             OR BINARY `client_platform` = BINARY 'unk';
+        END IF;
 
         -- -- PLACE UPDATE SQL ABOVE -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
@@ -212,14 +217,17 @@ BEGIN
             SHOW ERRORS;
             SELECT '* UPDATE FAILED *' AS `===== Status =====`,@cCurResult AS `===== DB is on Version: =====`;
         ELSE
-            COMMIT;
-            -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
-            -- UPDATE THE DB VERSION
-            -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+            -- Keep evidence conversion and its version marker atomic.
             INSERT INTO `db_version` VALUES (@cNewVersion, @cNewStructure, @cNewContent, @cNewDescription, @cNewComment);
-            SET @cNewResult := (SELECT `description` FROM `db_version` WHERE `version`=@cNewVersion AND `structure`=@cNewStructure AND `content`=@cNewContent);
-
-            SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,@cNewResult AS `===== DB is now on Version =====`;
+            IF bRollback = TRUE THEN
+                ROLLBACK;
+                SHOW ERRORS;
+                SELECT '* UPDATE FAILED *' AS `===== Status =====`,@cCurResult AS `===== DB is on Version: =====`;
+            ELSE
+                COMMIT;
+                SET @cNewResult := (SELECT `description` FROM `db_version` WHERE `version`=@cNewVersion AND `structure`=@cNewStructure AND `content`=@cNewContent);
+                SELECT '* UPDATE COMPLETE *' AS `===== Status =====`,@cNewResult AS `===== DB is now on Version =====`;
+            END IF;
         END IF;
     ELSE    -- Current version is not the expected version
         IF (@cCurVersion = @cNewVersion
