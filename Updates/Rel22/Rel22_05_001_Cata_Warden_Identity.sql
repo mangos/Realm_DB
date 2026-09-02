@@ -154,6 +154,30 @@ BEGIN
                 SET MESSAGE_TEXT = 'warden_incident.client_variant has an unexpected schema';
         END IF;
 
+        -- Before this migration client_platform held the Warden architecture.
+        -- Convert only that legacy vocabulary, including rows written by an
+        -- old core between an interrupted ALTER and this resumable retry.
+        UPDATE `warden_audit`
+           SET `client_architecture` = CASE
+                   WHEN BINARY `client_architecture` = BINARY 'unk'
+                       THEN `client_platform`
+                   ELSE `client_architecture`
+               END,
+               `client_platform` = 'Win'
+         WHERE BINARY `client_platform` = BINARY 'x86'
+            OR BINARY `client_platform` = BINARY 'x64'
+            OR BINARY `client_platform` = BINARY 'unk';
+        UPDATE `warden_incident`
+           SET `client_architecture` = CASE
+                   WHEN BINARY `client_architecture` = BINARY 'unk'
+                       THEN `client_platform`
+                   ELSE `client_architecture`
+               END,
+               `client_platform` = 'Win'
+         WHERE BINARY `client_platform` = BINARY 'x86'
+            OR BINARY `client_platform` = BINARY 'x64'
+            OR BINARY `client_platform` = BINARY 'unk';
+
         START TRANSACTION;
         INSERT INTO `db_version`
             (`version`,`structure`,`content`,`description`,`comment`)
