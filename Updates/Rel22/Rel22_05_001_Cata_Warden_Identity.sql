@@ -73,6 +73,8 @@ BEGIN
         -- The conditional ALTER statements make interrupted MariaDB DDL resumable.
         -- ALTER TABLE implicitly commits in MariaDB. Add each column only when
         -- absent and validate it immediately so a partial run is safely resumed.
+        -- VARBINARY defaults can be reported as x'...' by MariaDB or 0x... by MySQL.
+        -- Normalize only hex spelling; text defaults must remain byte-exact.
         IF (SELECT COUNT(*) FROM `INFORMATION_SCHEMA`.`COLUMNS`
             WHERE `TABLE_SCHEMA` = DATABASE()
               AND `TABLE_NAME` = 'warden_audit'
@@ -90,7 +92,11 @@ BEGIN
               AND LOWER(`COLUMN_TYPE`) = 'varbinary(4)'
               AND `IS_NULLABLE` = 'NO'
               AND (BINARY `COLUMN_DEFAULT` = BINARY 'unk'
-                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unk''')) <> 1 THEN
+                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unk'''
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('X''', HEX('unk'), '''')
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('0X', HEX('unk')))) <> 1 THEN
             SIGNAL SQLSTATE '45000'
                 SET MESSAGE_TEXT = 'warden_audit.client_architecture has an unexpected schema';
         END IF;
@@ -123,7 +129,11 @@ BEGIN
               AND LOWER(`COLUMN_TYPE`) = 'varbinary(4)'
               AND `IS_NULLABLE` = 'NO'
               AND (BINARY `COLUMN_DEFAULT` = BINARY 'unk'
-                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unk''')) <> 1 THEN
+                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unk'''
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('X''', HEX('unk'), '''')
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('0X', HEX('unk')))) <> 1 THEN
             SIGNAL SQLSTATE '45000'
                 SET MESSAGE_TEXT = 'warden_incident.client_architecture has an unexpected schema';
         END IF;
@@ -135,7 +145,11 @@ BEGIN
               AND LOWER(`COLUMN_TYPE`) = 'varbinary(16)'
               AND `IS_NULLABLE` = 'NO'
               AND (BINARY `COLUMN_DEFAULT` = BINARY 'unclassified'
-                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unclassified''')) <> 1 THEN
+                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unclassified'''
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('X''', HEX('unclassified'), '''')
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('0X', HEX('unclassified')))) <> 1 THEN
             SIGNAL SQLSTATE '45000'
                 SET MESSAGE_TEXT = 'warden_audit.client_variant has an unexpected schema';
         END IF;
@@ -158,7 +172,11 @@ BEGIN
               AND LOWER(`COLUMN_TYPE`) = 'varbinary(16)'
               AND `IS_NULLABLE` = 'NO'
               AND (BINARY `COLUMN_DEFAULT` = BINARY 'unclassified'
-                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unclassified''')) <> 1 THEN
+                   OR BINARY `COLUMN_DEFAULT` = BINARY '''unclassified'''
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('X''', HEX('unclassified'), '''')
+                   OR BINARY UPPER(`COLUMN_DEFAULT`) =
+                      BINARY CONCAT('0X', HEX('unclassified')))) <> 1 THEN
             SIGNAL SQLSTATE '45000'
                 SET MESSAGE_TEXT = 'warden_incident.client_variant has an unexpected schema';
         END IF;
